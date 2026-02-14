@@ -3,7 +3,8 @@ import numpy as np
 import pickle
 
 # Load trained model
-with open("house_model.pkl", "rb") as f:
+with open("House_Price_Prediction/house_model.pkl", "rb") as f:
+
     model = pickle.load(f)
 
 st.title("🏠 California House Price Prediction")
