@@ -27,12 +27,6 @@ The model was improved using feature engineering and regularization.
 
 ---
 
-## 🚀 Live Demo
-
-(Your Streamlit link will go here after deployment)
-
----
-
 ## 🛠 Technologies Used
 
 - Python
@@ -41,9 +35,4 @@ The model was improved using feature engineering and regularization.
 - Scikit-learn
 - Streamlit
 
----
-
-## ▶ How to Run Locally
-
-Clone the repository:
 
