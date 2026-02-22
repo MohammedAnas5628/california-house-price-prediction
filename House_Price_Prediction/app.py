@@ -1,31 +1,41 @@
 import streamlit as st
 import numpy as np
 import pickle
+import os
 
-# Load trained model
-with open("House_Price_Prediction/house_model.pkl", "rb") as f:
-
+# Load model safely
+model_path = os.path.join(os.path.dirname(__file__), "house_model.pkl")
+with open(model_path, "rb") as f:
     model = pickle.load(f)
 
+st.set_page_config(page_title="House Price Predictor", page_icon="🏠")
+
 st.title("🏠 California House Price Prediction")
-st.write("Enter housing details below:")
+st.write("Enter only the essential details:")
 
-# User Inputs
-MedInc = st.number_input("Median Income", value=3.0)
-HouseAge = st.number_input("House Age", value=20.0)
-AveRooms = st.number_input("Average Rooms", value=5.0)
-AveBedrms = st.number_input("Average Bedrooms", value=1.0)
-Population = st.number_input("Population", value=1000.0)
-AveOccup = st.number_input("Average Occupancy", value=3.0)
-Latitude = st.number_input("Latitude", value=34.0)
-Longitude = st.number_input("Longitude", value=-118.0)
+# --- Clean Minimal Inputs ---
+col1, col2 = st.columns(2)
 
-# Feature Engineering (same as training)
-RoomsPerHousehold = AveRooms / AveOccup
-BedroomsPerRoom = AveBedrms / AveRooms
-PopulationPerHousehold = Population / AveOccup
+with col1:
+    MedInc = st.number_input("Median Income", min_value=0.0, format="%.2f")
+    HouseAge = st.number_input("House Age", min_value=0.0, format="%.0f")
+    AveRooms = st.number_input("Average Rooms", min_value=0.0, format="%.2f")
 
-# Prepare input data
+with col2:
+    Latitude = st.number_input("Latitude", format="%.4f")
+    Longitude = st.number_input("Longitude", format="%.4f")
+
+# --- Hidden default values (not shown to user) ---
+AveBedrms = 1.0
+Population = 1000.0
+AveOccup = 3.0
+
+# --- Feature Engineering ---
+RoomsPerHousehold = AveRooms / AveOccup if AveOccup != 0 else 0
+BedroomsPerRoom = AveBedrms / AveRooms if AveRooms != 0 else 0
+PopulationPerHousehold = Population / AveOccup if AveOccup != 0 else 0
+
+# Prepare input
 input_data = np.array([[
     MedInc,
     HouseAge,
@@ -40,7 +50,7 @@ input_data = np.array([[
     PopulationPerHousehold
 ]])
 
-# Predict
+# --- Predict Button ---
 if st.button("Predict Price"):
     prediction = model.predict(input_data)[0]
-    st.success(f"Estimated House Price: ${prediction * 100000:,.2f}")
+    st.success(f"💰 Estimated House Price: ${prediction * 100000:,.2f}")
